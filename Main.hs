@@ -33,8 +33,17 @@ freq hz duration =
         output::[Pulse]
         output = map sin $ map (* step) [0.0 .. sampleRate * duration]
 
+envelop::Seconds->Seconds->[Pulse]->[Pulse]
+envelop attack release baseWave=
+    if attack+release > 1.0 then error "not able to create attack and release"
+    else
+        baseWave
+        where
+            baseLen = length baseWave
+            attackLen = round attack*(fromIntegral baseLen)
+
 note::Semitones->Seconds->[Pulse]
-note n duration = freq (f n) duration
+note n duration = envelop 0.25 0.25 $ freq (f n) duration
 
 wave::[Pulse]
 wave = concat [note i 1|i<-[0..10]]
