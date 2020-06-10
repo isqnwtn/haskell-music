@@ -10,6 +10,7 @@ type Samples = Float
 type Hz = Float
 type Semitones = Float
 
+
 outputFilePath :: FilePath
 outputFilePath = "output.bin"
 
@@ -37,16 +38,24 @@ envelop::Seconds->Seconds->[Pulse]->[Pulse]
 envelop attack release baseWave=
     if attack+release > 1.0 then error "not able to create attack and release"
     else
-        baseWave
+        zipWith (*) baseWave env
         where
-            baseLen = length baseWave
-            attackLen = round attack*(fromIntegral baseLen)
+            baseLen = fromIntegral $ length baseWave
+            attackLen = attack * baseLen
+            attackStep = 1.0 / attackLen
+            attackArray = [0.0,attackStep..1.0]
+            releaseLen = release * baseLen
+            releaseStep = 1.0 / releaseLen
+            releaseArray = reverse [0.0,releaseStep..1.0]
+            sustainArray = take ( round (baseLen - (attackLen + releaseLen)) ) $ repeat 1.0
+            env = concat [attackArray , sustainArray , releaseArray] :: [Pulse]
+            
 
 note::Semitones->Seconds->[Pulse]
-note n duration = envelop 0.25 0.25 $ freq (f n) duration
+note n duration = envelop 0.01 0.01 $ freq (f n) duration
 
 wave::[Pulse]
-wave = concat [note i 1|i<-[0..10]]
+wave = concat [note 0 0.25|i<-[0..10]]
 
 
 save::FilePath ->IO ()
