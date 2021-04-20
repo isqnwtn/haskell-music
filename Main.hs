@@ -14,6 +14,9 @@ type Semitones = Float
 outputFilePath :: FilePath
 outputFilePath = "output.bin"
 
+outputWavPath :: FilePath
+outputWavPath = "output.wav"
+
 volume::Float
 volume = 0.5
 
@@ -52,7 +55,7 @@ envelop attack release baseWave=
             
 
 note::Semitones->Seconds->[Pulse]
-note n duration = envelop 0.01 0.01 $ freq (f n) duration
+note n duration = envelop 0.1 0.1 $ freq (f n) duration
 
 wave::[Pulse]
 wave = concat [note 0 0.25|i<-[0..10]]
@@ -61,8 +64,7 @@ wave = concat [note 0 0.25|i<-[0..10]]
 save::FilePath ->IO ()
 save filePath = B.writeFile filePath $ B.toLazyByteString $ fold $ map B.floatLE wave
 
-play::IO()
-play = do
+main::IO()
+main = do
     save outputFilePath
-    _ <- runCommand $ printf "ffplay -f f32le -showmode 1 -ar %f %s" sampleRate outputFilePath
     return ()
