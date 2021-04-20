@@ -58,7 +58,7 @@ note::Semitones->Seconds->[Pulse]
 note n duration = envelop 0.1 0.1 $ freq (f n) duration
 
 wave::[Pulse]
-wave = concat [note 0 0.25|i<-[0..10]]
+wave = concat [note i 1.0|i<-[0..10]]
 
 
 save::FilePath ->IO ()
