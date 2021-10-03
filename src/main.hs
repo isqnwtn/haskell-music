@@ -12,10 +12,10 @@ type Semitones = Float
 
 
 outputFilePath :: FilePath
-outputFilePath = "output.bin"
+outputFilePath = "output/output.bin"
 
 outputWavPath :: FilePath
-outputWavPath = "output.wav"
+outputWavPath = "output/output.wav"
 
 volume::Float
 volume = 0.5
@@ -67,4 +67,5 @@ save filePath = B.writeFile filePath $ B.toLazyByteString $ fold $ map B.floatLE
 main::IO()
 main = do
     save outputFilePath
+    --runCommand "ffmpeg -f f32le -ar 48000 -i output.bin output.wav"
     return ()

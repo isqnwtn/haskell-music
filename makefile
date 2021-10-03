@@ -1,10 +1,10 @@
-all:
-	ghc main.hs
-test:
-	./main
-	rm -f output.wav
-	ffmpeg -f f32le -ar 48000 -i output.bin output.wav
+binfiles = $(wildcard output/*.bin)
+wavfiles = $(patsubst %.bin, %.wav, $(binfiles))
+all:$(wavfiles)
+	@echo "Build wav files"
+output/%.wav:output/%.bin
+	ffmpeg -f f32le -ar 48000 -i $^ $@
 clean:
-	rm output.*
+	rm output/*.wav
 cleanall:
-	rm main main.hi main.o
+	rm output/*
