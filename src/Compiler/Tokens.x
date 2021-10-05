@@ -11,10 +11,10 @@ tokens :-
 
   $white+                       ;
   "--".*                        ;
-  let                           { \s -> TokenLet }
-  in                            { \s -> TokenIn }
   p                             { \s -> TokenP }
+  fun                           { \s -> TokenFun }
   $digit+                       { \s -> TokenInt (read s) }
+  $digit+"."$digit+             { \s -> TokenFloat (read s) }
   \=                            { \s -> TokenEq }
   \+                            { \s -> TokenPlus }
   \-                            { \s -> TokenMinus }
@@ -22,16 +22,18 @@ tokens :-
   \/                            { \s -> TokenDiv }
   \(                            { \s -> TokenLParen }
   \)                            { \s -> TokenRParen }
+  \{                            { \s -> TokenLCurl }
+  \}                            { \s -> TokenRCurl }
   $alpha [$alpha $digit \_ \']* { \s -> TokenSym s }
 
 {
 
 -- The token type:
-data Token = TokenLet
-           | TokenIn
-           | TokenP
+data Token = TokenP
+           | TokenFun
            | TokenInt Int
            | TokenSym String
+           | TokenFloat Float
            | TokenEq
            | TokenPlus
            | TokenMinus
@@ -39,6 +41,8 @@ data Token = TokenLet
            | TokenDiv
            | TokenLParen
            | TokenRParen
+           | TokenLCurl
+           | TokenRCurl
            deriving (Eq,Show)
 
 scanTokens = alexScanTokens

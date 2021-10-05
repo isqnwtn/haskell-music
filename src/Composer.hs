@@ -65,7 +65,7 @@ note n duration = envelop 0.1 0.1 $ freq (f n) duration
 wave::[Pulse]
 wave = concat [note i 1.0|i<-[0..10]]
 
-concatNotes ((NoteC noteval duration):(xs)) = (note (fromIntegral noteval) (fromIntegral duration))++(concatNotes xs)
+concatNotes ((NoteC noteval duration):(xs)) = (note (fromIntegral noteval) (duration))++(concatNotes xs)
 concatNotes [] = []
 
 save::FilePath->[Note] ->IO ()

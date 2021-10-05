@@ -8,10 +8,10 @@ import Compiler.Tokens
 %error { parseError }
 
 %token
-    let { TokenLet }
-    in  { TokenIn }
     p   { TokenP }
+    fun { TokenFun }
     int { TokenInt $$ }
+    float { TokenFloat $$ }
     var { TokenSym $$ }
     '=' { TokenEq }
     '+' { TokenPlus }
@@ -20,6 +20,8 @@ import Compiler.Tokens
     '/' { TokenDiv }
     '(' { TokenLParen }
     ')' { TokenRParen }
+    '{' { TokenLCurl }
+    '}' { TokenRCurl }
 
 %right in
 %nonassoc '>' '<'
@@ -29,10 +31,12 @@ import Compiler.Tokens
 
 %%
 
+Function: fun var '{' Notes '}' { $4 }
+
 Notes: Note                  { [$1] }
      | Note Notes            { ($1:$2) }
 
-Note: p int int            { NoteC $2 $3 }
+Note: p int float            { NoteC $2 $3 }
 
 
 {
@@ -41,6 +45,6 @@ parseError :: [Token] -> a
 parseError _ = error "Parse error"
 
 
-data Note = NoteC Int Int
+data Note = NoteC Int Float
           deriving Show
 }
