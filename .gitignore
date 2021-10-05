@@ -2,3 +2,4 @@ main
 main.hi
 main.o
 output/*
+test/*

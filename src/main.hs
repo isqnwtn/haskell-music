@@ -1,8 +1,17 @@
+-- Byte conversion and production of binary files
 import qualified Data.ByteString.Lazy as B
 import qualified Data.ByteString.Builder as B
 import Data.Foldable
 import System.Process
 import Text.Printf
+
+-- For parsing input
+import Compiler.Grammar
+import Compiler.Tokens
+
+-- Commnad line arguments and data input
+import System.IO
+import System.Environment
 
 type Pulse = Float
 type Seconds = Float
@@ -60,12 +69,25 @@ note n duration = envelop 0.1 0.1 $ freq (f n) duration
 wave::[Pulse]
 wave = concat [note i 1.0|i<-[0..10]]
 
-
 save::FilePath ->IO ()
 save filePath = B.writeFile filePath $ B.toLazyByteString $ fold $ map B.floatLE wave
 
+-- Functions regarding parsing input
+readContent = do
+    args <- getArgs
+    if ( length args ) == 0
+    then do
+         contents <- getContents
+         return contents
+    else do
+         handle <- openFile ( head args ) ReadMode
+         contents <- hGetContents handle
+         return contents
+
 main::IO()
 main = do
+    inp <- readContent
+    let ast = parseCalc (scanTokens inp)
     save outputFilePath
     --runCommand "ffmpeg -f f32le -ar 48000 -i output.bin output.wav"
     return ()

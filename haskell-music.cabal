@@ -51,7 +51,8 @@ executable haskell-music
   main-is:             main.hs
   
   -- Modules included in this executable, other than Main.
-  -- other-modules:       
+  other-modules:      Compiler.Grammar
+                    , Compiler.Tokens
   
   -- LANGUAGE extensions used by modules in this package.
   -- other-extensions:    
@@ -60,9 +61,13 @@ executable haskell-music
   build-depends:       base >=4.9 && <4.10
                      , bytestring
                      , process
+                     , array
   
   -- Directories containing source files.
   hs-source-dirs:      src
+
+  -- Extra tools for building
+  build-tools:         alex, happy
   
   -- Base language which the package is written in.
   default-language:    Haskell2010
