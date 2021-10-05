@@ -3,3 +3,4 @@ main.hi
 main.o
 output/*
 test/*
+dist/*
