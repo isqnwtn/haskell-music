@@ -62,13 +62,19 @@ envelop attack release baseWave=
 note::Semitones->Seconds->[Pulse]
 note n duration = envelop 0.1 0.1 $ freq (f n) duration
 
+chord::[Semitones]->Seconds->[Pulse]
+chord ns duration = foldr (\x y -> zipWith (+) x y) (note (head ns) duration) [ (note x duration) | x <- (tail ns) ]
+
 wave::[Pulse]
 wave = concat [note i 1.0|i<-[0..10]]
 
-concatNotes ((NoteC noteval duration):(xs)) = (note (fromIntegral noteval) (duration))++(concatNotes xs)
+concatNotes ((NoteC duration noteval):(xs)) = (chord [(fromIntegral noteval)] (duration))++(concatNotes xs)
+concatNotes ((ChordC duration nlist):(xs)) = (chord [fromIntegral x | x<-nlist] duration)++(concatNotes xs)
 concatNotes [] = []
 
-save::FilePath->[Note] ->IO ()
-save filePath ast = B.writeFile filePath $ B.toLazyByteString $ fold $ map B.floatLE (concatNotes ast)
+compile ast = concatNotes ast
+
+save::FilePath->Program ->IO ()
+save filePath ast = B.writeFile filePath $ B.toLazyByteString $ fold $ map B.floatLE (compile ast)
 
 

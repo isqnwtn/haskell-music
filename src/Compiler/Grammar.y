@@ -31,12 +31,20 @@ import Compiler.Tokens
 
 %%
 
-Function: fun var '{' Notes '}' { $4 }
+Function: fun var '{' Statements '}' { $4 }
 
-Notes: Note                  { [$1] }
-     | Note Notes            { ($1:$2) }
+Statements : Statement                   { [$1] }
+           | Statement Statements         { ($1:$2) }
 
-Note: p int float            { NoteC $2 $3 }
+Statement: Note                          { $1 }
+         | Chord                         { $1 }
+
+Note: p '(' float int ')'           { NoteC $3 $4 }
+
+Chord: p '(' float '(' ints ')' ')' { ChordC $3 $5 }
+
+ints : int                          { [$1] }
+     | int ints                     { ($1:$2) }
 
 
 {
@@ -44,7 +52,8 @@ Note: p int float            { NoteC $2 $3 }
 parseError :: [Token] -> a
 parseError _ = error "Parse error"
 
-
-data Note = NoteC Int Float
+type Program = [Statement]
+data Statement = NoteC Float Int
+               | ChordC Float [Int]
           deriving Show
 }

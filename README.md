@@ -6,16 +6,17 @@ the audio file generated.
 ## example
 ```
 fun main{
-p 2 0.5
-p 1 1.0
-p 3 0.25
-p 4 0.5
-p 1 1.0
-p 6 0.75
-p 7 0.1
+p (0.5 2)
+p (0.5 (1 3) )
+p (1.0 1)
+p (0.25 3)
+p (0.5 4)
+p (1.0 1)
+p (0.75 6)
+p (0.1 7)
 }
 ```
-p stands for play, the next is an integer which denotes the note, and following its a float which denotes the duration for which the note is played
+p stands for play, the next is a float denoting the note duration, and following is an integer if its only playing one note, or a set of integers if its playing multiple notes together.
 
 ## Building and running
 ### build
